@@ -1,1 +1,144 @@
-map.min.js
+var ntmap;
+var places;
+var markerGroup;
+var $geo;
+
+$(document).ready(function() {
+	initMap();
+	centreMap();
+	initAndLoad();
+});
+
+function initMap() {
+	ntmap = L.map('mapid', {
+		fullscreenControl: true,
+		fullscreenControlOptions: {
+		  position: 'topright'
+		},
+		zoomControl: false,
+		maxBounds: new L.LatLngBounds( new L.LatLng(-90, -180), new L.LatLng(90, 180)),
+		minZoom: 2,
+	});
+	L.control.zoom({
+		position:'topright'
+	}).addTo(ntmap);
+	markerGroup = L.featureGroup().addTo(ntmap);
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(ntmap);
+	ntmap.on('contextmenu', function (eventData) { window.location.hash ='#closest-5-'+eventData.latlng.lat + ',' + eventData.latlng.lng; });
+	console.info('map initialised');
+}
+
+function centreMap() {
+	// centre on the complete bounds of all UK
+	ntmap.fitBounds(
+		[
+			[52.421457000779704, -3.6571837775409226],
+			[50.880985171180015, 0.2859234809875489]
+		]
+	);
+}
+
+function addDoneMarker(latitude, longitude, place) {
+	var markerIcon = L.ExtraMarkers.icon({
+		markerColor: 'green-light',
+		icon: 'fa-check',
+		prefix: 'fa'
+	});
+	addMarker(latitude, longitude, place, markerIcon);
+}
+
+function addMarker(latitude, longitude, place, markerIcon) {
+	if (markerIcon === undefined) {
+		markerIcon = L.icon({
+			iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+			shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+			iconSize: [25, 41],
+			iconAnchor: [12, 41],
+			popupAnchor: [1, -34],
+			shadowSize: [41, 41]
+		});
+	}
+	var marker = L.marker([latitude, longitude]);
+
+	// header and link
+	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a><br />';
+	// directions
+	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
+	// description
+	markerContent += place.description+'<br />';
+	// image
+	markerContent += '<img width="200px" src="'+place.imageUrl+'"/>';
+	if (typeof(markerContent) !== 'undefined') {
+		markerContent += '<br />';
+	}
+	// markerContent += '<a target="_blank" href="https://www.happycow.net/searchmap?lat='+latitude+'&lng='+longitude+'&vegan=true">Local vegan food</a>';
+	marker.bindPopup(markerContent);
+	marker.addTo(markerGroup);
+}
+
+function displayPlaces() {
+	console.info('displaying places');
+	console.info(places);
+	var placesData = Object.values(places);
+	console.info(placesData.length);
+	for (var i = 0; i < placesData.length; i++) {
+		var place = placesData[i];
+		if (i == 0) {
+			console.info(place);
+		}
+		if (placeDone(place)) {
+			addDoneMarker(place.location.latitude, place.location.longitude, place);
+		} else {
+			addMarker(place.location.latitude, place.location.longitude, place);
+		}
+	}
+}
+
+function placeDone(place) {
+	return false;
+}
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+	var R = 6371; // Radius of the earth in km
+	var dLat = deg2rad(lat2-lat1);  // deg2rad below
+	var dLon = deg2rad(lon2-lon1);
+	var a =
+		Math.sin(dLat/2) * Math.sin(dLat/2) +
+		Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+		Math.sin(dLon/2) * Math.sin(dLon/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	var d = R * c; // Distance in km
+	return d;
+}
+
+function deg2rad(deg) {
+	return deg * (Math.PI/180)
+}
+
+function load() {
+	$(document).ready(function() {
+		markerGroup.clearLayers();
+		console.info('cleared, displaying');
+		displayPlaces();
+	});
+}
+
+function init() {
+	$(window).bind( 'hashchange', function(event) {
+		load();
+	});
+	$.ajax({
+		url: './places.json',
+		async: false,
+	}).done(function(data) {
+		places = data;
+	});
+}
+
+function initAndLoad() {
+	init();
+	load();
+}
