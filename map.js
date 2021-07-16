@@ -4,10 +4,15 @@ var markerGroup;
 var $geo;
 
 $(document).ready(function() {
+	initOptions();
 	initMap();
 	centreMap();
 	initAndLoad();
 });
+
+function initOptions() {
+	options = JSON.parse(Cookies.get('nt-options') || '{}');
+}
 
 function initMap() {
 	ntmap = L.map('mapid', {
@@ -28,7 +33,6 @@ function initMap() {
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(ntmap);
 	ntmap.on('contextmenu', function (eventData) { window.location.hash ='#closest-5-'+eventData.latlng.lat + ',' + eventData.latlng.lng; });
-	console.info('map initialised');
 }
 
 function centreMap() {
@@ -47,6 +51,7 @@ function addDoneMarker(latitude, longitude, place) {
 		icon: 'fa-check',
 		prefix: 'fa'
 	});
+	console.info('adding done marker for ' + place.title);
 	addMarker(latitude, longitude, place, markerIcon);
 }
 
@@ -64,32 +69,29 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	var marker = L.marker([latitude, longitude]);
 
 	// header and link
-	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a><br />';
+	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a> ';
+	if (isPlaceDone(place)) {
+		markerContent += '<a href="javascript:updateVisited(\''+placeId+'\', false)">&cross;</a><br />';
+	} else {
+		markerContent += '<a href="javascript:updateVisited(\''+placeId+'\')">&check;</a><br />';
+	}
 	// directions
 	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
 	// description
 	markerContent += place.description+'<br />';
 	// image
-	markerContent += '<img width="200px" src="'+place.imageUrl+'"/>';
-	if (typeof(markerContent) !== 'undefined') {
-		markerContent += '<br />';
-	}
+	markerContent += '<img width="200px" src="'+place.imageUrl+'"/><br />';
+	var placeId = getPlaceId(place);
 	// markerContent += '<a target="_blank" href="https://www.happycow.net/searchmap?lat='+latitude+'&lng='+longitude+'&vegan=true">Local vegan food</a>';
 	marker.bindPopup(markerContent);
 	marker.addTo(markerGroup);
 }
 
 function displayPlaces() {
-	console.info('displaying places');
-	console.info(places);
 	var placesData = Object.values(places);
-	console.info(placesData.length);
 	for (var i = 0; i < placesData.length; i++) {
 		var place = placesData[i];
-		if (i == 0) {
-			console.info(place);
-		}
-		if (placeDone(place)) {
+		if (isPlaceDone(place)) {
 			addDoneMarker(place.location.latitude, place.location.longitude, place);
 		} else {
 			addMarker(place.location.latitude, place.location.longitude, place);
@@ -97,8 +99,30 @@ function displayPlaces() {
 	}
 }
 
-function placeDone(place) {
-	return false;
+function isPlaceDone(place) {
+	var options = JSON.parse(Cookies.get('ntoptions') || '{}');
+	var placeId = getPlaceId(place);
+	if (options[placeId] === undefined) {
+		return false;
+	}
+	console.info(JSON.parse(options[placeId]));
+	return JSON.parse(options[placeId]);
+}
+
+function getPlaceId(place) {
+	return place.websiteUrl.replace(/^https:\/\/www.nationaltrust.org.uk\//, '');
+}
+
+function updateVisited(placeId, visited) {
+	if (visited === undefined) {
+		visited = true;
+	}
+	var options = JSON.parse(Cookies.get('ntoptions') || '{}');
+	options[placeId] = visited;
+	var pathArray = window.location.pathname.split('/');
+	var path = pathArray.splice(0,pathArray.length -2).join('/') + '/';
+	Cookies.set('ntoptions', JSON.stringify(options), { expires: 3650, path: path, secure: true });
+	window.location = path;
 }
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
@@ -121,7 +145,6 @@ function deg2rad(deg) {
 function load() {
 	$(document).ready(function() {
 		markerGroup.clearLayers();
-		console.info('cleared, displaying');
 		displayPlaces();
 	});
 }
