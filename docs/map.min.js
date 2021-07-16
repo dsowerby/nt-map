@@ -100,7 +100,7 @@ function displayPlaces() {
 	$('[data-place-id]').on('click', function() {
 		console.info('clicked');
 		var placeId = $(this).attr('data-place-id');
-		var placeVisted = JSON.parse($(this).attr('data-place-visisted'));
+		var placeVisted = JSON.parse($(this).attr('data-place-visited'));
 		if (placeVisted) {
 			$(this).html('&cross;');
 			$(this).attr('data-place-visited', 'false');
