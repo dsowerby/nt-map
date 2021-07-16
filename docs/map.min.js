@@ -87,20 +87,6 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	marker.addTo(markerGroup);
 }
 
-$('[data-place-id]').on('click', function() {
-	console.info('clicked');
-	var placeId = $(this).attr('data-place-id');
-	var placeVisted = JSON.parse($(this).attr('data-place-visisted'));
-	if (placeVisted) {
-		$(this).html('&cross;');
-		$(this).attr('data-place-visited', 'false');
-	} else {
-		$(this).html('&check;');
-		$(this).attr('data-place-visited', 'true');
-	}
-	updateVisited(placeId, placeVisted);
-});
-
 function displayPlaces() {
 	var placesData = Object.values(places);
 	for (var i = 0; i < placesData.length; i++) {
@@ -111,6 +97,19 @@ function displayPlaces() {
 			addMarker(place.location.latitude, place.location.longitude, place);
 		}
 	}
+	$('[data-place-id]').on('click', function() {
+		console.info('clicked');
+		var placeId = $(this).attr('data-place-id');
+		var placeVisted = JSON.parse($(this).attr('data-place-visisted'));
+		if (placeVisted) {
+			$(this).html('&cross;');
+			$(this).attr('data-place-visited', 'false');
+		} else {
+			$(this).html('&check;');
+			$(this).attr('data-place-visited', 'true');
+		}
+		updateVisited(placeId, placeVisted);
+	});
 }
 
 function isPlaceDone(place) {
