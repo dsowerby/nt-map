@@ -88,6 +88,7 @@ function addMarker(latitude, longitude, place, markerIcon) {
 }
 
 $('[data-place-id]').on('click', function() {
+	console.info('clicked');
 	var placeId = $(this).attr('data-place-id');
 	var placeVisted = JSON.parse($(this).attr('data-place-visisted'));
 	if (placeVisted) {
