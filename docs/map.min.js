@@ -71,9 +71,9 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	// header and link
 	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a> ';
 	if (isPlaceDone(place)) {
-		markerContent += '<a data-place-id="'+placeId+'" data-place-visited="true">&cross;</a><br />';
+		markerContent += '<span data-place-id="'+placeId+'" data-place-visited="true">&cross;</span><br />';
 	} else {
-		markerContent += '<a data-place-id="'+placeId+'" data-place-visited="false">&check;</a><br />';
+		markerContent += '<span data-place-id="'+placeId+'" data-place-visited="false">&check;</span><br />';
 	}
 	// directions
 	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
