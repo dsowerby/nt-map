@@ -11,7 +11,7 @@ $(document).ready(function() {
 });
 
 function initOptions() {
-	options = JSON.parse(Cookies.get('nt-options') || '{}');
+	options = JSON.parse(Cookies.get('ntoptions') || '{}');
 }
 
 function initMap() {
