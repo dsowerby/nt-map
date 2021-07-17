@@ -70,17 +70,17 @@ function addMarker(latitude, longitude, place, markerIcon) {
 
 	// header and link
 	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a> ';
-	if (isPlaceDone(place)) {
-		markerContent += '<a href="./option/#'+placeId+'=true">&cross;</a><br />';
-	} else {
-		markerContent += '<a href="./option/#'+placeId+'=false">&check;</a><br />';
-	}
 	// directions
 	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
 	// description
 	markerContent += place.description+'<br />';
 	// image
 	markerContent += '<img width="200px" src="'+place.imageUrl+'"/><br />';
+	if (isPlaceDone(place)) {
+		markerContent += '<a href="./option/#'+placeId+'=true">mark place as visited &cross;</a><br />';
+	} else {
+		markerContent += '<a href="./option/#'+placeId+'=false">unmark place as visited &check;</a><br />';
+	}
 	var placeId = getPlaceId(place);
 	// markerContent += '<a target="_blank" href="https://www.happycow.net/searchmap?lat='+latitude+'&lng='+longitude+'&vegan=true">Local vegan food</a>';
 	marker.bindPopup(markerContent);
