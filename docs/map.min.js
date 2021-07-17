@@ -78,9 +78,9 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	markerContent += '<img width="200px" src="'+place.imageUrl+'"/><br />';
 	var placeId = getPlaceId(place);
 	if (isPlaceDone(place)) {
-		markerContent += '<a href="./option/#'+placeId+'=true">mark place as visited &cross;</a><br />';
-	} else {
 		markerContent += '<a href="./option/#'+placeId+'=false">unmark place as visited &check;</a><br />';
+	} else {
+		markerContent += '<a href="./option/#'+placeId+'=true">mark place as visited &cross;</a><br />';
 	}
 	// markerContent += '<a target="_blank" href="https://www.happycow.net/searchmap?lat='+latitude+'&lng='+longitude+'&vegan=true">Local vegan food</a>';
 	marker.bindPopup(markerContent);
