@@ -71,9 +71,9 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	// header and link
 	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a> ';
 	if (isPlaceDone(place)) {
-		markerContent += '<span data-place-id="'+placeId+'" data-place-visited="true">&cross;</span><br />';
+		markerContent += '<a href="./option/#'+placeId+'=true">&cross;</a><br />';
 	} else {
-		markerContent += '<span data-place-id="'+placeId+'" data-place-visited="false">&check;</span><br />';
+		markerContent += '<a href="./option/#'+placeId+'=false">&check;</a><br />';
 	}
 	// directions
 	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
@@ -97,19 +97,6 @@ function displayPlaces() {
 			addMarker(place.location.latitude, place.location.longitude, place);
 		}
 	}
-	$('[data-place-id]').on('click', function() {
-		console.info('clicked');
-		var placeId = $(this).attr('data-place-id');
-		var placeVisted = JSON.parse($(this).attr('data-place-visited'));
-		if (placeVisted) {
-			$(this).html('&cross;');
-			$(this).attr('data-place-visited', 'false');
-		} else {
-			$(this).html('&check;');
-			$(this).attr('data-place-visited', 'true');
-		}
-		updateVisited(placeId, placeVisted);
-	});
 }
 
 function isPlaceDone(place) {
@@ -124,18 +111,6 @@ function isPlaceDone(place) {
 
 function getPlaceId(place) {
 	return place.websiteUrl.replace(/^https:\/\/www.nationaltrust.org.uk\//, '');
-}
-
-function updateVisited(placeId, visited) {
-	if (visited === undefined) {
-		visited = true;
-	}
-	var options = JSON.parse(Cookies.get('ntoptions') || '{}');
-	options[placeId] = visited;
-	var pathArray = window.location.pathname.split('/');
-	var path = pathArray.splice(0,pathArray.length -2).join('/') + '/';
-	Cookies.set('ntoptions', JSON.stringify(options), { expires: 3650, path: path, secure: true });
-	window.location = path;
 }
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
