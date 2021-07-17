@@ -22,7 +22,7 @@
 			var pathArray = window.location.pathname.split('/');
 			var path = pathArray.splice(0,pathArray.length -2).join('/') + '/';
 			Cookies.set('options', JSON.stringify(options), { expires: 3650, path: path, secure: true });
-			window.close();
+			window.location = path;
 		});
 	</script>
 </head>
