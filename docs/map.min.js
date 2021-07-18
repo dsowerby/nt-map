@@ -11,7 +11,7 @@ $(document).ready(function() {
 });
 
 function initOptions() {
-	options = JSON.parse(Cookies.get('ntoptions') || '{}');
+	options = JSON.parse(Cookies.get('options') || '{}');
 }
 
 function initMap() {
@@ -100,7 +100,7 @@ function displayPlaces() {
 }
 
 function isPlaceDone(place) {
-	var options = JSON.parse(Cookies.get('ntoptions') || '{}');
+	var options = JSON.parse(Cookies.get('options') || '{}');
 	var placeId = getPlaceId(place);
 	if (options[placeId] === undefined) {
 		return false;
