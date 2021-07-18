@@ -69,7 +69,7 @@ function addMarker(latitude, longitude, place, markerIcon) {
 	var marker = L.marker([latitude, longitude]);
 
 	// header and link
-	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a> ';
+	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a><br />';
 	// directions
 	markerContent += '<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination='+latitude+','+longitude+'&travelmode=driving">Directions</a><br/>';
 	// description
