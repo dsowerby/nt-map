@@ -51,7 +51,6 @@ function addDoneMarker(latitude, longitude, place) {
 		icon: 'fa-check',
 		prefix: 'fa'
 	});
-	console.info('adding done marker for ' + place.title);
 	addMarker(latitude, longitude, place, markerIcon);
 }
 
@@ -65,11 +64,8 @@ function addMarker(latitude, longitude, place, markerIcon) {
 			popupAnchor: [1, -34],
 			shadowSize: [41, 41]
 		});
-	} else {
-		console.info("using passed marker");
-		console.info(markerIcon);
 	}
-	var marker = L.marker([latitude, longitude]);
+	var marker = L.marker([latitude, longitude], { icon: markerIcon});
 
 	// header and link
 	var markerContent = '<a href="'+place.websiteUrl+'" target="_blank">'+place.title+'</a><br />';
