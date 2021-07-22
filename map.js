@@ -65,6 +65,9 @@ function addMarker(latitude, longitude, place, markerIcon) {
 			popupAnchor: [1, -34],
 			shadowSize: [41, 41]
 		});
+	} else {
+		console.info("using passed marker");
+		console.info(markerIcon);
 	}
 	var marker = L.marker([latitude, longitude]);
 
@@ -105,7 +108,6 @@ function isPlaceDone(place) {
 	if (options[placeId] === undefined) {
 		return false;
 	}
-	console.info(JSON.parse(options[placeId]));
 	return JSON.parse(options[placeId]);
 }
 
